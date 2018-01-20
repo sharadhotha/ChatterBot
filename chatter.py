@@ -10,10 +10,7 @@ sessionId = random.randint(10000,1000000)
 print ("Your Session ID is {}." .format(sessionId))
 
 #Implementing the SQL Database
-newpath = r'./sessions' 
-if not os.path.exists(newpath):
-    os.makedirs(newpath)
-connection =sqlite3.connect('./sessions/{}.db'.format(sessionId))
+connection =sqlite3.connect('./Sessions/{}.db'.format(sessionId))
 cursor = connection.cursor()
 sql_command = """ CREATE TABLE chat(submitted VARCHAR(100), output VARCHAR(100));"""
 try: 
@@ -24,8 +21,12 @@ connection.commit()
 
 #Loading the AIML file.
 kernel = aiml.Kernel()
-kernel.learn('init.aiml')
-kernel.respond("load aiml b")
+if os.path.isfile("bot_brain.brn"):
+    kernel.bootstrap(brainFile = "bot_brain.brn")
+else:
+    kernel.bootstrap(learnFiles = "std-startup.xml", commands = "LOAD CHATTER")
+    kernel.saveBrain("bot_brain.brn")
+
 
 #Chatting Begins
 while True: 
